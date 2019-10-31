@@ -54,24 +54,33 @@ server.get('/users/:id', (req, res) => {
     
 })
 
+
+
 server.post('/users', (req, res) => {
     const newUser = req.body
 
-    db.insert(newUser)
-        .then(user => {
-            res.status(201).json({
-                success: true,
-                user
+    if (newUser.name && newUser.bio) {
+        db.insert(newUser)
+            .then(newUser => {
+                res.status(201).json({
+                    success: true,
+                    newUser
+                })
             })
-        })
-        .catch((err) => {
-            res.status(500).json({
-                success: false,
-                message: err
+            .catch(err => {
+                res.status(500).json({
+                    success: false,
+                    err
+                })
             })
-
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'name and bio are required'
         })
+    }
 })
+
 
 server.put('/users/:id', (req, res) => {
     const newInfo = req.body
